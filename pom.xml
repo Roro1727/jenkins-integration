@@ -31,6 +31,11 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+                 <dependency>
+    <groupId>org.owasp</groupId>
+    <artifactId>dependency-check-maven</artifactId>
+    <version>12.2.0</version>
+</dependency>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.19</version>
@@ -57,6 +62,12 @@
             <artifactId>junit-platform-runner</artifactId>
             <version>${junit.platform.version}</version>
         </dependency>
+        
+         <dependency>
+                  <groupId>org.owasp</groupId>
+                  <artifactId>dependency-check-maven</artifactId>
+                  <version>12.2.0</version>
+         </dependency>
 
     </dependencies>
          
