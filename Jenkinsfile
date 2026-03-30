@@ -54,20 +54,5 @@ pipeline {
 
     }
 }
-```
 
----
-
-## Step 6: Run the Pipeline
-
-1. Go to your `jenkins-example` job
-2. Click **Build Now**
-3. Click the build number → **Console Output** to watch it live
-
-You should see all 5 stages execute in sequence:
-```
-✅ Compile Stage
-✅ Testing Stage
-✅ SonarQube Analysis
-✅ Quality Gate
 ✅ Deployment Stage
