@@ -1,37 +1,36 @@
 pipeline {
     agent any
 
+    environment {
+        MAVEN_HOME = tool 'maven_3_5_0'
+        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
+    }
+
     stages {
 
         stage('Compile Stage') {
             steps {
-                withMaven(maven: 'maven_3_5_0') {
-                    sh 'mvn clean compile'
-                }
+                sh 'mvn clean compile'
             }
         }
 
         stage('Testing Stage') {
             steps {
-                withMaven(maven: 'maven_3_5_0') {
-                    sh 'mvn test'
-                }
+                sh 'mvn test'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {   // must match name configured in Jenkins
-                    withMaven(maven: 'maven_3_5_0') {
-                        sh '''
-                            mvn sonar:sonar \
-                              -Dsonar.projectKey=jenkins-example \
-                              -Dsonar.projectName="Jenkins Example" \
-                              -Dsonar.sources=src/main/java \
-                              -Dsonar.tests=src/test/java \
-                              -Dsonar.java.binaries=target/classes
-                        '''
-                    }
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        mvn sonar:sonar \
+                          -Dsonar.projectKey=jenkins-integration \
+                          -Dsonar.projectName="Jenkins Integration" \
+                          -Dsonar.sources=src/main/java \
+                          -Dsonar.tests=src/test/java \
+                          -Dsonar.java.binaries=target/classes
+                    '''
                 }
             }
         }
@@ -44,14 +43,11 @@ pipeline {
             }
         }
 
-        stage('Deployment Stage') {
+        stage('Package Stage') {
             steps {
-                withMaven(maven: 'maven_3_5_0') {
-                    sh 'mvn deploy'
-                }
+                sh 'mvn package'
             }
         }
 
     }
 }
-
