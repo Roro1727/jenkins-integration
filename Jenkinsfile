@@ -21,26 +21,18 @@ pipeline {
         }
 
         stage('OWASP Dependency Check') {
-            steps {
-                withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
-                    dependencyCheck(
-                        additionalArguments: """
-                            --scan ./
-                            --format XML
-                            --format HTML
-                            --out ./dependency-check-report
-                            --nvdApiKey ${NVD_KEY}
-                            --prettyPrint
-                        """,
-                        odcInstallation: 'OWASP-DC'
-                    )
-                }
-                dependencyCheckPublisher(
-                    pattern: 'dependency-check-report/dependency-check-report.xml'
-                )
-            }
+    steps {
+        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
+            dependencyCheck(
+                additionalArguments: '--scan ./ --format XML --format HTML --out ./dependency-check-report --nvdApiKey $NVD_KEY --prettyPrint',
+                odcInstallation: 'OWASP-DC'
+            )
         }
-
+        dependencyCheckPublisher(
+            pattern: 'dependency-check-report/dependency-check-report.xml'
+        )
+    }
+}
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
