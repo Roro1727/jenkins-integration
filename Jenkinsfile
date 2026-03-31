@@ -19,20 +19,18 @@ pipeline {
                 sh 'mvn test'
             }
         }
-
-        stage('OWASP Dependency Check') {
+    stages {
+        stage('Snyk Security Scan') {
             steps {
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    dependencyCheck(
-                        additionalArguments: '--scan ./ --format XML --format HTML --out ./dependency-check-report --prettyPrint -n',
-                        odcInstallation: 'OWASP-DC'
-                    )
-                    dependencyCheckPublisher(
-                        pattern: 'dependency-check-report/dependency-check-report.xml'
-                    )
-                }
+                snykSecurity(
+                    snykInstallation: 'SnykLatest',
+                    snykTokenId: 'snyk_token',
+                    failOnIssues: true,       // fail build if vulnerabilities found
+                    severity: 'high'          // threshold: low | medium | high | critical
+                )
             }
         }
+    }
 
         stage('SonarQube Analysis') {
             steps {
