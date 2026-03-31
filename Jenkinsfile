@@ -19,7 +19,7 @@ pipeline {
                 sh 'mvn test'
             }
         }
-    stages {
+
         stage('Snyk Security Scan') {
             steps {
                 snykSecurity(
@@ -30,7 +30,7 @@ pipeline {
                 )
             }
         }
-    }
+    
 
         stage('SonarQube Analysis') {
             steps {
