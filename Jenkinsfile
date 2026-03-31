@@ -21,18 +21,21 @@ pipeline {
         }
 
         stage('OWASP Dependency Check') {
-    steps {
-        withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
-            dependencyCheck(
-                additionalArguments: '--scan ./ --format XML --format HTML --out ./dependency-check-report --nvdApiKey $NVD_KEY --prettyPrint --failOnError false',
-                odcInstallation: 'OWASP-DC'
-            )
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
+                        dependencyCheck(
+                            additionalArguments: '--scan ./ --format XML --format HTML --out ./dependency-check-report --prettyPrint --nvdApiKey $NVD_KEY',
+                            odcInstallation: 'OWASP-DC'
+                        )
+                    }
+                }
+                dependencyCheckPublisher(
+                    pattern: 'dependency-check-report/dependency-check-report.xml'
+                )
+            }
         }
-        dependencyCheckPublisher(
-            pattern: 'dependency-check-report/dependency-check-report.xml'
-        )
-    }
-}
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
@@ -61,6 +64,25 @@ pipeline {
                 sh 'mvn package'
             }
         }
+
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo '✅ All stages passed successfully!'
+        }
+        unstable {
+            echo '⚠️ Pipeline completed with warnings.'
+        }
+        failure {
+            echo '❌ Pipeline failed. Check the logs above.'
+        }
+    }
+
+}        }
 
     }
 
