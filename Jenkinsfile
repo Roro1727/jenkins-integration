@@ -82,23 +82,4 @@ pipeline {
         }
     }
 
-}        }
-
-    }
-
-   post {
-    always {
-        echo 'Pipeline finished.'
-    }
-    success {
-        echo '✅ All stages passed successfully!'
-    }
-    unstable {
-        echo '⚠️ Pipeline completed with warnings (check OWASP report).'
-    }
-    failure {
-        echo '❌ Pipeline failed. Check the logs above.'
-    }
-}
-
 }
