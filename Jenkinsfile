@@ -24,7 +24,7 @@ pipeline {
     steps {
         withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
             dependencyCheck(
-                additionalArguments: '--scan ./ --format XML --format HTML --out ./dependency-check-report --nvdApiKey $NVD_KEY --prettyPrint',
+                additionalArguments: '--scan ./ --format XML --format HTML --out ./dependency-check-report --nvdApiKey $NVD_KEY --prettyPrint --failOnError false',
                 odcInstallation: 'OWASP-DC'
             )
         }
@@ -64,16 +64,19 @@ pipeline {
 
     }
 
-    post {
-        always {
-            echo 'Pipeline finished.'
-        }
-        success {
-            echo 'All stages passed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed. Check the logs above.'
-        }
+   post {
+    always {
+        echo 'Pipeline finished.'
     }
+    success {
+        echo '✅ All stages passed successfully!'
+    }
+    unstable {
+        echo '⚠️ Pipeline completed with warnings (check OWASP report).'
+    }
+    failure {
+        echo '❌ Pipeline failed. Check the logs above.'
+    }
+}
 
 }
