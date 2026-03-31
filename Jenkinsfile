@@ -23,15 +23,13 @@ pipeline {
         stage('OWASP Dependency Check') {
             steps {
                 catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    withCredentials([string(credentialsId: 'nvd-api-key', variable: 'NVD_KEY')]) {
-                        dependencyCheck(
-                            additionalArguments: "--scan ./ --format XML --format HTML --out ./dependency-check-report --prettyPrint --nvdApiKey ${env.NVD_KEY} --nvdApiDelay 4000",
-                            odcInstallation: 'OWASP-DC'
-                        )
-                        dependencyCheckPublisher(
-                            pattern: 'dependency-check-report/dependency-check-report.xml'
-                        )
-                    }
+                    dependencyCheck(
+                        additionalArguments: '--scan ./ --format XML --format HTML --out ./dependency-check-report --prettyPrint -n',
+                        odcInstallation: 'OWASP-DC'
+                    )
+                    dependencyCheckPublisher(
+                        pattern: 'dependency-check-report/dependency-check-report.xml'
+                    )
                 }
             }
         }
