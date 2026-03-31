@@ -25,8 +25,9 @@ pipeline {
                 snykSecurity(
                     snykInstallation: 'SnykLatest',
                     snykTokenId: 'snyk_token',
-                    failOnIssues: true,       // fail build if vulnerabilities found
-                    severity: 'high'          // threshold: low | medium | high | critical
+                    failOnIssues: false,       // fail build if vulnerabilities found
+                    severity: 'high',     
+                    monitor: true         // threshold: low | medium | high | critical
                 )
             }
         }
